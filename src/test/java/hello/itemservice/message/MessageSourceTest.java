@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 
 import java.util.Locale;
 
@@ -22,5 +23,18 @@ public class MessageSourceTest {
     public void hello(){
         String result = ms.getMessage("hello", null, Locale.ENGLISH);
         Assertions.assertThat(result).isEqualTo("hello");
+    }
+    @Test
+    public void notFoundMessageCode(){
+        Assertions.assertThatThrownBy(() -> ms.getMessage("no_code",null,null)).isInstanceOf(NoSuchMessageException.class);
+
+    }
+    @Test
+    public void defaultMessage(){
+        Assertions.assertThat(ms.getMessage("no_code",null,"default",null)).isEqualTo("default");
+    }
+    @Test
+    public void argumentMessage(){
+        Assertions.assertThat(ms.getMessage("hello.name",new Object[]{"Spring"},"default",null)).isEqualTo("안녕 Spring");
     }
 }
